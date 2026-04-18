@@ -209,3 +209,34 @@ def calculate_ssim(img1, img2):
             return ssim(np.squeeze(img1), np.squeeze(img2))
     else:
         raise ValueError('Wrong input image dimensions.')
+ 
+###########################################
+# visualization: difference maps
+###########################################
+def save_diff_maps(gt, pred, save_path_prefix):
+    """
+    gt, pred: numpy images in range [0,1], shape (H,W,3)
+    """
+    import cv2
+    import numpy as np
+
+    # Absolute difference
+    diff = np.abs(gt - pred)
+
+    # Convert to grayscale difference
+    diff_gray = np.mean(diff, axis=2)
+
+    # Normalize for visibility
+    if diff_gray.max() > 0:
+        diff_norm = (diff_gray / diff_gray.max() * 255).astype(np.uint8)
+    else:
+        diff_norm = (diff_gray * 255).astype(np.uint8)
+
+    # Heatmap
+    heatmap = cv2.applyColorMap(diff_norm, cv2.COLORMAP_JET)
+
+    # Save images
+    cv2.imwrite(save_path_prefix + "_diff.png", diff_norm)
+    cv2.imwrite(save_path_prefix + "_heatmap.png", heatmap)
+    
+    

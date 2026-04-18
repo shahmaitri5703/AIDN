@@ -1,6 +1,6 @@
 DATA:
   data_name: DIV2K
-  data_root: Data/DIV2K/
+  data_root: Data/
   train_set: list/train.txt
   val_set: list/val.txt
   loop: 1
@@ -23,7 +23,7 @@ NETWORK:
   n_feats: 64
   fixed_scale: False
   scale: 4
-  rescale:  # not used
+  rescale:
   n_colors: 3
   res_scale: 1
   quantization: True
@@ -33,14 +33,13 @@ NETWORK:
   num_experts_CRM: 8
   jpeg: False
 
-
 TRAIN:
   use_sgd: False
-  sync_bn: True  # adopt sync_bn or not
-  train_gpu: [0,1,2,3]
-  workers: 16  # data loader workers
-  batch_size: 16  # batch size for training
-  batch_size_val: 16  # batch size for validation during training, memory and speed tradeoff
+  sync_bn: False
+  train_gpu: []
+  workers: 2
+  batch_size: 1
+  batch_size_val: 1
   base_lr: 0.0001
   StepLR: True
   step_size: 60
@@ -59,28 +58,28 @@ TRAIN:
   print_freq: 10
   save_freq: 1
   save_path:
-  weight: 
+  weight:
   resume:
-  evaluate: True  # evaluate on validation set, extra gpu memory needed and small batch_size_val is recommend
+  evaluate: True
   eval_freq: 1
+  use_cuda: False
 
 Distributed:
   dist_url: tcp://127.0.0.1:6799
-  dist_backend: 'nccl'
-  multiprocessing_distributed: True
+  dist_backend: gloo
+  multiprocessing_distributed: False
   world_size: 1
   rank: 0
 
 TEST:
   exp_name: AIDN
   test_root: Data/
-  # test_dataset: Set5+Set14+BSDS100+urban100
   test_dataset: Set5
-  test_scale: 1.5+2.5+3.5
-  save: False
+  test_scale: 1.5
+  save: True
   split: val
-  test_workers: 2
-  test_gpu: [0]
+  test_workers: 1
+  test_gpu: []
   test_batch_size: 1
-  model_path:
-  save_folder:
+  model_path: LOG/DIV2K/pre-train/AIDN.pth.tar
+  save_folder: results
